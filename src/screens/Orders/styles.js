@@ -19,6 +19,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: 'lightgrey',
   },
+  input: {
+  //borderWidth:1,
+  borderBottomWidth: 2,
+  borderStyle: 'solid',
+  paddingVertical: 20,
+  marginVertical: 10,
+  height: 30,
+  borderRadius: 10,
+  
+  },
   container: {
     margin: 20,
   },
@@ -33,7 +43,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: '#5b5b5b',
   },
-
+  
   description: {
     fontSize: 18,
     lineHeight: 26,

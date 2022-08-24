@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
-import {Text, View, FlatList, TextInput , Pressable} from 'react-native';
+import {Text, View, FlatList, TextInput , Pressable, Button} from 'react-native';
 import styles from './styles.js';
 // import feed from '../../../assets/data/feed';
 import Post from '../../components/Post';
 import {URL} from '../../../constants';
 import axios from 'axios';
+import DatePicker from 'react-native-date-picker';
+import { displayDate, makeDateSearchString} from '../../dateHelper.js';
 
 
 const SearchResultsScreen = ({ navigation }) => {
@@ -15,10 +17,16 @@ const SearchResultsScreen = ({ navigation }) => {
     const [feed, setFeed] = useState([]);
     const [People, setPeople] = useState(0);
     const [children, setChildren] = useState(0);
-
+    const [start, setStart] = useState(new Date());
+    const [end, setEnd] = useState(new Date());
+    const [startOpen, setStartOpen] = useState(false);
+    const [endOpen, setEndOpen] = useState(false);
     const searchRooms = () =>{
+        const startString=makeDateSearchString(start);
+        const endString = makeDateSearchString(end);
+
         axios
-            .get(URL + `/rooms/available/${startDate}/${endDate}`)
+            .get(URL + `/rooms/available/${startString}/${endString}`)
             .then((response) => {
                 setFeed(() => {
                     return response.data;
@@ -31,12 +39,11 @@ const SearchResultsScreen = ({ navigation }) => {
     }
     
     
-    
     return (
 
         <View>
             {/* <Text>Not</Text> */}
-            <TextInput
+            {/* <TextInput
                 style={styles.input}
                 onChangeText={setStartDate}
                 value={startDate}
@@ -47,7 +54,42 @@ const SearchResultsScreen = ({ navigation }) => {
                 onChangeText={setEndDate}
                 value={endDate}
                 placeholder="end date"
+            /> */}
+            
+            <Pressable style={styles.button} onPress={() => setStartOpen(true)} >
+                <Text>Start date: {displayDate(start)}</Text>
+            </Pressable>
+            <DatePicker
+                modal
+                open={startOpen}
+                date={start}
+                onConfirm={(date) => {
+                    setStartOpen(false)
+                    setStart(date)
+                }}
+                onCancel={() => {
+                    setStartOpen(false)
+                }}
+                mode="date"
             />
+        
+            <Pressable style={styles.button} onPress={() => setEndOpen(true)} >
+                <Text>End date: {displayDate(end)}</Text>
+            </Pressable>
+            <DatePicker
+                modal
+                open={endOpen}
+                date={end}
+                onConfirm={(date) => {
+                    setEndOpen(false)
+                    setEnd(date)
+                }}
+                onCancel={() => {
+                    setEndOpen(false)
+                }}
+                mode="date"
+            />
+            
             <View style={styles.row} >
                 {/* row 1 adult, titles, */}
                 <View>
@@ -78,7 +120,7 @@ const SearchResultsScreen = ({ navigation }) => {
             ) : (
                     <FlatList
                         data={feed}
-                        renderItem={({ item }) => <Post post={item} navigation={navigation} startDate={startDate} endDate={endDate} />}
+                        renderItem={({ item }) => <Post post={item} navigation={navigation} startDate={start} endDate={end} />}
                     />
             ))}
 
